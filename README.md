@@ -24,7 +24,6 @@ Simple • Modern UI • Supports looping videos • Audio extraction (MP3/WAV) 
 ---
 ### Screenshot
 <img src="screenshots/screenshot.png" width="800"/>
-*(Replace with your actual screenshot)*
 
 ---
 ### How to Update yt-dlp & Libraries (Important!)
