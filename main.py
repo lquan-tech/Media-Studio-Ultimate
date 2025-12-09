@@ -109,6 +109,17 @@ html_content = """<!DOCTYPE html>
     .fmt-item:hover { background:var(--primary); color:#fff; transform:translateY(-3px); box-shadow:0 5px 15px rgba(255,0,85,0.3); }
 
     .fmt-item span { display:block; font-size:0.8em; opacity:0.7; margin-top:3px; font-weight:normal; }
+
+    /* SHORTENER STYLES */
+    .url-group { display:flex; align-items:stretch; margin-bottom:5px; }
+    .url-prefix { background:#333; color:#aaa; padding:18px; border-radius:14px 0 0 14px; border:1px solid #444; border-right:none; display:flex; align-items:center; font-size:1.1em; }
+    .url-input { border-radius:0 14px 14px 0 !important; border-left:none !important; flex:1; }
+    .helper-text { text-align:center; color:#888; font-size:0.85em; margin-bottom:20px; margin-top:5px;}
+    
+    .result-box { border:2px solid #ffaa00; background:rgba(255,170,0,0.05); padding:25px; border-radius:18px; margin-top:20px; text-align:center; display:none; animation:fadeIn 0.5s; }
+    .result-link { font-size:1.8em; font-weight:bold; color:#00aaff; margin:15px 0; word-break:break-all; }
+    .btn-copy { background:#ffaa00; color:#000; display:inline-flex; align-items:center; gap:8px; padding:12px 30px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; transition:0.3s; font-size:1.1em; }
+    .btn-copy:hover { background:#ffcc00; box-shadow:0 0 15px rgba(255,170,0,0.4); transform:translateY(-2px); }
 </style>
 </head>
 <body>
@@ -329,19 +340,31 @@ html_content = """<!DOCTYPE html>
 
     <div id="shortener" class="section">
         <div class="card">
-            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">URL Shortener</h2>
-            <div style="max-width:600px; margin:0 auto; text-align:center;">
-                <input type="text" id="short-url-input" class="input-box" placeholder="Paste your long URL here..." style="margin-bottom:20px;">
-                <button class="btn" onclick="shorten_url()" style="width:100%; font-size:1.2em; margin-bottom:20px;">Shorten URL</button>
+            <h2 style="text-align:center; margin-bottom:30px; color:var(--primary);">URL Shortener</h2>
+            
+            <div style="max-width:700px; margin:0 auto;">
+                <label class="label-title" style="text-align:center; font-size:1.1em; margin-bottom:10px;">Paste your long URL</label>
+                <input type="text" id="short-url-input" class="input-box" placeholder="Paste a link (http:// or https://)..." style="margin-bottom:20px;">
                 
-                <div id="short-result" style="display:none; background:#222; padding:20px; border-radius:12px; border:1px solid #444;">
-                    <label class="label-title" style="margin-bottom:10px;">Shortened URL:</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="short-url-out" class="input-style" readonly style="margin-bottom:0; text-align:center; font-size:1.2em; color:var(--primary);">
-                        <button class="btn" onclick="copyShortUrl()" style="margin:0;">Copy</button>
-                    </div>
+                <label class="label-title" style="text-align:center; font-size:1.1em; margin-bottom:10px;">Custom short link (optional)</label>
+                <div class="url-group">
+                    <div class="url-prefix">is.gd/</div>
+                    <input type="text" id="short-alias" class="input-box url-input" placeholder="your-custom-name">
                 </div>
+                <div class="helper-text">Only letters, numbers, - or _ (max 30 characters).</div>
+                
+                <button class="btn" onclick="shorten_url()" style="width:100%; font-size:1.2em; margin-top:10px; padding:15px;">Shorten URL</button>
+                
                 <div id="short-status" class="status-text"></div>
+
+                <div id="short-result" class="result-box">
+                    <div style="font-weight:bold; color:var(--text); margin-bottom:5px;">Your Shortened Link</div>
+                    <div id="short-url-display" class="result-link"></div>
+                    <button class="btn-copy" onclick="copyShortUrl()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"></path></svg>
+                        Copy Link
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -838,27 +861,34 @@ html_content = """<!DOCTYPE html>
     
     async function shorten_url() {
         const url = document.getElementById('short-url-input').value.trim();
+        const alias = document.getElementById('short-alias').value.trim();
         if(!url) return;
         
         document.getElementById('short-status').innerText = "Shortening...";
         document.getElementById('short-result').style.display = 'none';
         
-        const res = await window.pywebview.api.shorten_url(url);
+        const res = await window.pywebview.api.shorten_url(url, alias);
         if(res.success) {
-             document.getElementById('short-url-out').value = res.url;
+             document.getElementById('short-url-display').innerText = res.url;
              document.getElementById('short-result').style.display = 'block';
-             document.getElementById('short-status').innerText = "Done!";
+             document.getElementById('short-status').innerText = "";
         } else {
              document.getElementById('short-status').innerText = "Error: " + res.error;
         }
     }
     
     function copyShortUrl() {
-        const copyText = document.getElementById("short-url-out");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); 
-        navigator.clipboard.writeText(copyText.value);
-        alert("Copied: " + copyText.value);
+        const text = document.getElementById("short-url-display").innerText;
+        navigator.clipboard.writeText(text);
+        
+        const btn = document.querySelector('.btn-copy');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = "Copied!";
+        btn.style.background = "#44ff44";
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.style.background = "";
+        }, 2000);
     }
 
 </script>
@@ -1042,9 +1072,12 @@ class Api:
             return {'success': True, 'path': out_path}
         except Exception as e: return {'success': False, 'error': str(e)}
 
-    def shorten_url(self, url):
+    def shorten_url(self, url, alias=None):
         try:
             api_url = f"https://is.gd/create.php?format=simple&url={urllib.parse.quote(url)}"
+            if alias:
+                api_url += f"&shorturl={urllib.parse.quote(alias)}"
+            
             req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
             with urllib.request.urlopen(req) as response:
                 if response.status == 200:
@@ -1052,6 +1085,16 @@ class Api:
                     return {'success': True, 'url': short_url}
                 else:
                     return {'success': False, 'error': f"HTTP {response.status}"}
+        except urllib.error.HTTPError as e:
+            # is.gd returns 400 etc for bad aliases
+            if e.code == 400 or e.code == 500: # Try to read the error message
+                 try:
+                     err_msg = e.read().decode('utf-8')
+                     # is.gd simple format usually returns "Error: ..."
+                     return {'success': False, 'error': err_msg}
+                 except:    
+                     return {'success': False, 'error': f"HTTP Error {e.code}"}
+            return {'success': False, 'error': str(e)}
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
