@@ -1,4 +1,4 @@
-# Media Studio Ultimate 2.0
+# Media Studio Ultimate 2.1
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
