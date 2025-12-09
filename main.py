@@ -25,6 +25,8 @@ import urllib.request
 from http.server import SimpleHTTPRequestHandler, socketserver
 from webview import FileDialog
 import webbrowser
+import qrcode
+from PIL import Image
 
 LOGO_SVG = """<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
   <circle cx="64" cy="64" r="60" fill="#ff0055" opacity="0.2"/>
@@ -120,6 +122,38 @@ html_content = """<!DOCTYPE html>
     .result-link { font-size:1.8em; font-weight:bold; color:#00aaff; margin:15px 0; word-break:break-all; }
     .btn-copy { background:#ffaa00; color:#000; display:inline-flex; align-items:center; gap:8px; padding:12px 30px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; transition:0.3s; font-size:1.1em; }
     .btn-copy:hover { background:#ffcc00; box-shadow:0 0 15px rgba(255,170,0,0.4); transform:translateY(-2px); }
+
+    /* ADVANCED QR STYLES */
+    .qr-container { display:flex; gap:20px; height:600px; }
+    .qr-config { flex:1; background:var(--card); border-radius:15px; border:1px solid #333; overflow:hidden; display:flex; flex-direction:column; }
+    .qr-preview { width:400px; background:var(--card); border-radius:15px; border:1px solid #333; padding:20px; display:flex; flex-direction:column; align-items:center; }
+    
+    .config-nav { display:flex; background:#222; border-bottom:1px solid #333; }
+    .nav-item { flex:1; text-align:center; padding:15px 10px; cursor:pointer; color:#888; font-weight:bold; transition:0.2s; border-bottom:3px solid transparent; }
+    .nav-item:hover { color:#fff; background:rgba(255,255,255,0.05); }
+    .nav-item.active { color:var(--primary); border-bottom-color:var(--primary); background:rgba(255,0,85,0.05); }
+    
+    .config-body { flex:1; padding:20px; overflow-y:auto; }
+    .config-tab { display:none; animation:fadeIn 0.3s; }
+    .config-tab.active { display:block; }
+    
+    .shape-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+    .shape-item { background:#1a1f2e; padding:15px; border-radius:10px; border:2px solid transparent; cursor:pointer; text-align:center; transition:0.2s; }
+    .shape-item:hover { border-color:#555; transform:translateY(-2px); }
+    .shape-item.selected { border-color:var(--primary); background:rgba(255,0,85,0.1); box-shadow:0 0 15px rgba(255,0,85,0.2); }
+    .shape-icon { width:40px; height:40px; margin-bottom:5px; opacity:0.8; }
+    
+    .color-section { margin-bottom:20px; }
+    .color-toggle { display:flex; background:#111; padding:4px; border-radius:8px; margin-bottom:15px; }
+    .color-opt { flex:1; text-align:center; padding:8px; cursor:pointer; border-radius:6px; font-size:0.9em; }
+    .color-opt.active { background:#333; color:#fff; font-weight:bold; }
+    
+    .preview-box { width:100%; aspect-ratio:1; background:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; position:relative; overflow:hidden; }
+    .qr-img-display { max-width:90%; max-height:90%; }
+    .qr-download-btn { width:100%; border:none; padding:15px; font-weight:bold; font-size:1.1em; background:var(--primary); color:#fff; border-radius:8px; cursor:pointer; transition:0.2s; }
+    .qr-download-btn:hover { background:#e6004c; transform:translateY(-2px); box-shadow:0 5px 15px rgba(255,0,85,0.4); }
+    .logo-upload-box { border:2px dashed #444; border-radius:10px; padding:30px; text-align:center; cursor:pointer; transition:0.2s; color:#888; }
+    .logo-upload-box:hover { border-color:var(--primary); color:#fff; background:rgba(255,255,255,0.05); }
 </style>
 </head>
 <body>
@@ -135,7 +169,7 @@ html_content = """<!DOCTYPE html>
             <div class="tab" onclick="switchTab('converter')" id="tab-btn-converter">Converter</div>
             <div class="tab" onclick="switchTab('resizer')" id="tab-btn-resizer">Editor (Resize/Crop)</div>
             <div class="tab" onclick="switchTab('gifmaker')" id="tab-btn-gifmaker">Video to GIF</div>
-            <div class="tab" onclick="switchTab('shortener')" id="tab-btn-shortener">URL Shortener</div>
+            <div class="tab" onclick="switchTab('shortener')" id="tab-btn-shortener">Links & QR</div>
         </div>
     </div>
 
@@ -380,6 +414,131 @@ html_content = """<!DOCTYPE html>
                         Copy Link
                     </button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- MERGED QR DESIGNER -->
+        <div id="qr-section-inner" style="margin-top:40px; border-top:1px solid #333; padding-top:20px;">
+             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">Advanced QR Designer</h2>
+             <div class="qr-container">
+                 <!-- LEFT CONFIG -->
+                <div class="qr-config">
+                    <div class="config-nav">
+                        <div class="nav-item active" onclick="switchQrTab('content')">Content</div>
+                        <div class="nav-item" onclick="switchQrTab('shapes')">Shapes</div>
+                        <div class="nav-item" onclick="switchQrTab('colors')">Colors</div>
+                        <div class="nav-item" onclick="switchQrTab('logo')">Logo</div>
+                    </div>
+                    
+                    <div class="config-body">
+                        <!-- CONTENT TAB -->
+                        <div id="qt-content" class="config-tab active">
+                            <label class="label-title">Website URL or Text</label>
+                            <textarea id="avr-data" class="input-box" rows="5" placeholder="https://example.com" oninput="debounceAvr()"></textarea>
+                        </div>
+                        
+                        <!-- SHAPES TAB -->
+                        <div id="qt-shapes" class="config-tab">
+                            <label class="label-title">Data Modules</label>
+                            <div class="shape-grid">
+                                <div class="shape-item selected" onclick="selShape(this, 'square')">
+                                    <div style="font-size:24px">⬛</div>
+                                    <div>Square</div>
+                                </div>
+                                <div class="shape-item" onclick="selShape(this, 'circle')">
+                                    <div style="font-size:24px">●</div>
+                                    <div>Dot</div>
+                                </div>
+                                <div class="shape-item" onclick="selShape(this, 'rounded')">
+                                    <div style="font-size:24px">▢</div>
+                                    <div>Rounded</div>
+                                </div>
+                                <div class="shape-item" onclick="selShape(this, 'gapped')">
+                                    <div style="font-size:24px">▪️</div>
+                                    <div>Gapped</div>
+                                </div>
+                                 <div class="shape-item" onclick="selShape(this, 'vertical')">
+                                    <div style="font-size:24px">|||</div>
+                                    <div>Vertical</div>
+                                </div>
+                                 <div class="shape-item" onclick="selShape(this, 'horizontal')">
+                                    <div style="font-size:24px">≡</div>
+                                    <div>Horizontal</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="avr-shape" value="square">
+                        </div>
+                        
+                        <!-- COLORS TAB -->
+                        <div id="qt-colors" class="config-tab">
+                            <label class="label-title">Color Mode</label>
+                            <div class="color-toggle">
+                                <div class="color-opt active" onclick="switchColorMode('solid')" id="cm-btn-solid">Single Color</div>
+                                <div class="color-opt" onclick="switchColorMode('gradient')" id="cm-btn-gradient">Gradient</div>
+                            </div>
+                            <input type="hidden" id="avr-color-mode" value="solid">
+                            
+                            <div id="cm-panel-solid">
+                                 <label class="label-title">Foreground Color</label>
+                                 <input type="color" id="avr-fill" value="#000000" class="input-style" style="height:50px; cursor:pointer;" onchange="debounceAvr()">
+                            </div>
+                            
+                            <div id="cm-panel-gradient" style="display:none">
+                                 <label class="label-title">Gradient Type</label>
+                                 <select id="avr-grad-type" class="select-style" onchange="debounceAvr()">
+                                     <option value="vertical">Linear Vertical (Top-Bottom)</option>
+                                     <option value="horizontal">Linear Horizontal (Left-Right)</option>
+                                     <option value="radial">Radial (Center-Edge)</option>
+                                     <option value="square">Square (Center-Edge)</option>
+                                 </select>
+                                 
+                                 <div class="row">
+                                     <div class="col">
+                                         <label class="label-title">Start / Center</label>
+                                         <input type="color" id="avr-g-start" value="#ff0000" class="input-style" style="height:50px" onchange="debounceAvr()">
+                                     </div>
+                                     <div class="col">
+                                         <label class="label-title">End / Edge</label>
+                                         <input type="color" id="avr-g-end" value="#0000ff" class="input-style" style="height:50px" onchange="debounceAvr()">
+                                     </div>
+                                 </div>
+                            </div>
+                            
+                            <div style="margin-top:20px; border-top:1px solid #333; padding-top:20px;">
+                                 <label class="label-title">Background Color</label>
+                                 <input type="color" id="avr-back" value="#ffffff" class="input-style" style="height:50px; cursor:pointer;" onchange="debounceAvr()">
+                            </div>
+                        </div>
+                        
+                        <!-- LOGO TAB -->
+                        <div id="qt-logo" class="config-tab">
+                             <label class="label-title">Upload Logo</label>
+                             <div class="logo-upload-box" onclick="uploadAvrLogo()">
+                                 <div style="font-size:3em">☁️</div>
+                                 <div id="avr-logo-name">Click to Upload</div>
+                             </div>
+                             <button class="btn btn-sm btn-secondary" id="avr-rm-logo" onclick="rmAvrLogo(event)" style="margin-top:10px; display:none;">Remove Logo</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RIGHT PREVIEW -->
+                <div class="qr-preview">
+                    <h3 style="margin-bottom:20px; color:#aaa;">Preview</h3>
+                    <div class="preview-box">
+                        <img id="avr-preview" class="qr-img-display" src="">
+                        <div id="avr-loading" style="position:absolute; background:rgba(255,255,255,0.8); padding:10px 20px; border-radius:20px; color:#000; font-weight:bold; display:none;">Generating...</div>
+                    </div>
+                    <button class="qr-download-btn" onclick="downloadAvr()">
+                         Download High Res
+                    </button>
+                    <div style="margin-top:10px; font-size:0.8em; color:#666;">
+                        Generates transparent PNG with high quality vectors.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
             </div>
         </div>
     </div>
@@ -919,8 +1078,116 @@ html_content = """<!DOCTYPE html>
              document.getElementById('short-url-display').innerText = res.url;
              document.getElementById('short-result').style.display = 'block';
              document.getElementById('short-status').innerText = "";
+             
+             // Auto-fill QR and Scroll
+             document.getElementById('avr-data').value = res.url;
+             debounceAvr();
+             document.getElementById('qr-section-inner').scrollIntoView({behavior:'smooth'});
         } else {
              document.getElementById('short-status').innerText = "Error: " + res.error;
+        }
+    }
+
+    // --- ADVANCED QR JS ---
+    let avrDebounce;
+    let avrLogoPath = null;
+    let avrFinalPath = null;
+
+    function switchQrTab(t) {
+        document.querySelectorAll('.config-tab').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.qr-config .nav-item').forEach(e => e.classList.remove('active'));
+        
+        document.getElementById('qt-'+t).classList.add('active');
+        const tabs = ['content','shapes','colors','logo'];
+        const idx = tabs.indexOf(t);
+        if(idx>=0) document.querySelectorAll('.qr-config .nav-item')[idx].classList.add('active');
+    }
+    
+    function selShape(el, shape) {
+        document.querySelectorAll('.shape-item').forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('avr-shape').value = shape;
+        debounceAvr();
+    }
+    
+    function switchColorMode(m) {
+        document.getElementById('avr-color-mode').value = m;
+        document.getElementById('cm-btn-solid').className = m === 'solid' ? 'color-opt active' : 'color-opt';
+        document.getElementById('cm-btn-gradient').className = m === 'gradient' ? 'color-opt active' : 'color-opt';
+        document.getElementById('cm-panel-solid').style.display = m === 'solid' ? 'block' : 'none';
+        document.getElementById('cm-panel-gradient').style.display = m === 'gradient' ? 'block' : 'none';
+        debounceAvr();
+    }
+
+    function debounceAvr() {
+        clearTimeout(avrDebounce);
+        document.getElementById('avr-loading').style.display = 'block';
+        avrDebounce = setTimeout(generateAvrQr, 800);
+    }
+    
+    async function generateAvrQr() {
+        const data = document.getElementById('avr-data').value;
+        if(!data) {
+             document.getElementById('avr-preview').src = "";
+             document.getElementById('avr-loading').style.display = 'none';
+             return;
+        }
+        
+        const mode = document.getElementById('avr-color-mode').value;
+        
+        const args = {
+            data: data,
+            drawer: document.getElementById('avr-shape').value,
+            fill_color: document.getElementById('avr-fill').value,
+            back_color: document.getElementById('avr-back').value,
+            logo_path: avrLogoPath,
+            mask: mode === 'solid' ? 'solid' : document.getElementById('avr-grad-type').value
+        };
+        
+        if(mode === 'gradient') {
+            args.gradient_center = document.getElementById('avr-g-start').value;
+            args.gradient_edge = document.getElementById('avr-g-end').value;
+            args.gradient_start = document.getElementById('avr-g-start').value;
+            args.gradient_end = document.getElementById('avr-g-end').value;
+        }
+        
+        try {
+            const res = await window.pywebview.api.generate_advanced_qr(JSON.stringify(args));
+            if(res.success) {
+                avrFinalPath = res.path;
+                document.getElementById('avr-preview').src = "http://127.0.0.1:8000/stream?path=" + encodeURIComponent(res.path) + "&t=" + new Date().getTime();
+            } else {
+                console.error(res.error);
+            }
+        } catch(e) { console.error(e); }
+        document.getElementById('avr-loading').style.display = 'none';
+    }
+    
+    async function uploadAvrLogo() {
+        const f = await window.pywebview.api.choose_files(false);
+        if(f && f.length) {
+            avrLogoPath = f[0];
+            document.getElementById('avr-logo-name').innerText = f[0].split(/[\\\\/]/).pop();
+            document.getElementById('avr-rm-logo').style.display = 'block';
+            debounceAvr();
+        }
+    }
+    
+    function rmAvrLogo(e) {
+        e.stopPropagation();
+        avrLogoPath = null;
+        document.getElementById('avr-logo-name').innerText = "Click to Upload";
+        document.getElementById('avr-rm-logo').style.display = 'none';
+        debounceAvr();
+    }
+    
+    async function downloadAvr() {
+        if(!avrFinalPath) return;
+        const folder = await window.pywebview.api.choose_folder();
+        if(folder) {
+            // Updated to use save_qr_cleanup
+            const res = await window.pywebview.api.save_qr_cleanup(avrFinalPath, folder);
+            if(res.success) alert("Saved!");
         }
     }
     
@@ -1075,7 +1342,17 @@ class Api:
             name = os.path.splitext(os.path.basename(src))[0]
             outfile = os.path.join(folder, f"{name}.{fmt}")
             subprocess.run([self._ff(), '-y', '-i', src, outfile], check=True, creationflags=0x08000000)
-            # Removed self._open_folder(folder) to prevent spam
+            return {'success': True}
+        except Exception as e: return {'success': False, 'error': str(e)}
+
+    def save_qr_cleanup(self, src, folder):
+        try:
+            if not os.path.exists(src): return {'success': False, 'error': 'Source file not found'}
+            name = os.path.basename(src)
+            dst = os.path.join(folder, name)
+            import shutil
+            shutil.copy2(src, dst)
+            os.remove(src)
             return {'success': True}
         except Exception as e: return {'success': False, 'error': str(e)}
 
@@ -1143,6 +1420,86 @@ class Api:
             self._open_folder(out_path)
             return {'success': True, 'path': out_path}
         except Exception as e: return {'success': False, 'error': str(e)}
+
+    def generate_advanced_qr(self, json_args):
+        try:
+            import qrcode
+            from qrcode.image.styledpil import StyledPilImage
+            from qrcode.image.styles.moduledrawers import SquareModuleDrawer, GappedSquareModuleDrawer, CircleModuleDrawer, RoundedModuleDrawer, VerticalBarsDrawer, HorizontalBarsDrawer
+            from qrcode.image.styles.colormasks import SolidFillColorMask, RadialGradiantColorMask, SquareGradiantColorMask, HorizontalGradiantColorMask, VerticalGradiantColorMask
+            from PIL import Image
+
+            args = json.loads(json_args)
+            data = args['data']
+            if not data: return {'success': False, 'error': 'No data'}
+            
+            qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
+            qr.add_data(data)
+            qr.make(fit=True)
+            
+            # Drawer Map
+            drawers = {
+                'square': SquareModuleDrawer(), 'circle': CircleModuleDrawer(), 'rounded': RoundedModuleDrawer(),
+                'gapped': GappedSquareModuleDrawer(), 'vertical': VerticalBarsDrawer(), 'horizontal': HorizontalBarsDrawer()
+            }
+            drawer = drawers.get(args.get('drawer'), SquareModuleDrawer())
+            
+            # Colors
+            def hex2rgb(h): return tuple(int(h.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+            
+            back_c = hex2rgb(args.get('back_color', '#ffffff'))
+            mask_type = args.get('mask', 'solid')
+            
+            if mask_type == 'solid':
+                front_c = hex2rgb(args.get('fill_color', '#000000'))
+                mask = SolidFillColorMask(front_color=front_c, back_color=back_c)
+            else:
+                c_start = hex2rgb(args.get('gradient_start', '#000000'))
+                c_end = hex2rgb(args.get('gradient_end', '#000000'))
+                
+                if mask_type == 'radial':
+                    mask = RadialGradiantColorMask(back_color=back_c, center_color=c_start, edge_color=c_end)
+                elif mask_type == 'square':
+                    mask = SquareGradiantColorMask(back_color=back_c, center_color=c_start, edge_color=c_end)
+                elif mask_type == 'horizontal':
+                    mask = HorizontalGradiantColorMask(back_color=back_c, left_color=c_start, right_color=c_end)
+                elif mask_type == 'vertical':
+                    mask = VerticalGradiantColorMask(back_color=back_c, top_color=c_start, bottom_color=c_end)
+                else:
+                    mask = SolidFillColorMask(front_color=(0,0,0), back_color=back_c)
+
+            img = qr.make_image(image_factory=StyledPilImage, module_drawer=drawer, color_mask=mask)
+            
+            # Logo Embed
+            logo_path = args.get('logo_path')
+            if logo_path and os.path.exists(logo_path):
+                img_w, img_h = img.size
+                logo = Image.open(logo_path)
+                
+                # Resize to 25% of QR width
+                logo_max = int(img_w * 0.25)
+                logo.thumbnail((logo_max, logo_max), Image.Resampling.LANCZOS)
+                
+                pos = ((img_w - logo.size[0]) // 2, (img_h - logo.size[1]) // 2)
+                
+                # If image is not RGBA, convert it
+                img = img.convert("RGBA")
+                if logo.mode != 'RGBA': logo = logo.convert("RGBA")
+                
+                img.paste(logo, pos, mask=logo)
+            
+            # Save
+            temp_dir = os.path.join(os.getcwd(), 'screenshots')
+            if not os.path.exists(temp_dir): os.makedirs(temp_dir)
+            
+            fname = f"qr_{int(time.time()*1000)}.png"
+            out_path = os.path.join(temp_dir, fname)
+            img.save(out_path)
+            
+            return {'success': True, 'path': out_path}
+            
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
 
     def shorten_url(self, url, alias=None):
         try:
