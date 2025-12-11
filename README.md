@@ -366,7 +366,6 @@ MIT License © 2025 dat514
 - **[pywebview](https://pywebview.flowrl.com)** - Lightweight GUI framework
 - **[Python](https://python.org)** - Programming language
 
----
 
 
 ---
