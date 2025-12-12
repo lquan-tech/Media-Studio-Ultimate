@@ -295,7 +295,7 @@ pause
 
 ## 📋 System Requirements
 
-- **OS**: Windows 7+, macOS 10.13+, Linux (Ubuntu 18.04+)
+- **OS**: Windows 10+, Linux (Ubuntu 18.04+)
 - **Python**: 3.9 or higher
 - **RAM**: 2GB minimum, 4GB recommended
 - **Storage**: 100MB for app + space for media files
