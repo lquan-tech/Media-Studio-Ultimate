@@ -1,14 +1,14 @@
 @echo off
-title Install Dependencies - Media Studio Ultimate 2.0
+title Install Dependencies - Media Studio Ultimate 2.4
 color 0A
 echo ========================================
-echo  Media Studio Ultimate 2.0
+echo  Media Studio Ultimate 2.4
 echo  Dependency Installer
 echo ========================================
 echo.
 echo Installing required libraries...
 echo.
-pip install pywebview yt-dlp qrcode[pil] pillow rembg opencv-python-headless numpy librosa matplotlib scipy soundfile pandas
+pip install pywebview yt-dlp instaloader qrcode[pil] pillow rembg opencv-python-headless numpy librosa matplotlib scipy soundfile pandas
 echo.
 echo ========================================
 echo  Installation complete!
