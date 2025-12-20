@@ -6,7 +6,7 @@ import cv2
 from rembg import remove, new_session
 from PIL import Image, ImageEnhance, ImageFilter
 
-# Global session to avoid reloading model
+
 _session = None
 TEMP_DIR = os.path.join(os.getcwd(), 'temp_bg_removed')
 
@@ -35,11 +35,11 @@ class WorldClassRemover:
         Core removal pipeline (World Class Quality).
         Returns: (original_rgb_pil, refined_alpha_np, original_size)
         """
-        # --- 1. PRE-PROCESS ---
+        
         img_pil = Image.open(image_path).convert("RGB")
         w, h = img_pil.size
         
-        # Scale logic: Max dimension 2048px
+        
         max_dim = 2048
         scale_factor = 1.0
         if max(w, h) > max_dim:
@@ -47,15 +47,15 @@ class WorldClassRemover:
             new_w, new_h = int(w * scale_factor), int(h * scale_factor)
             img_pil = img_pil.resize((new_w, new_h), Image.Resampling.LANCZOS)
         
-        # Enhance for better detection
+        
         img_enhanced = ImageEnhance.Sharpness(img_pil).enhance(1.2)
         img_enhanced = ImageEnhance.Contrast(img_enhanced).enhance(1.1)
 
-        # --- 2. AI REMOVAL ---
+        
         img_np = np.array(img_enhanced)
         height, width = img_np.shape[:2]
         
-        # Adaptive parameters
+        
         erode_size = max(1, int(width * 0.001)) 
         
         result = remove(
@@ -67,14 +67,14 @@ class WorldClassRemover:
             alpha_matting_erode_size=erode_size
         )
 
-        # --- 3. POST-PROCESSING (VFX) ---
+        
         result_np = np.array(result)
         if result_np.shape[2] < 4: 
             raise Exception("Failed to generate alpha channel")
 
         alpha = result_np[:, :, 3]
 
-        # Clean Mask
+        
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(alpha, connectivity=8)
         if num_labels > 1:
             largest_label = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
@@ -84,7 +84,7 @@ class WorldClassRemover:
                 if stats[i, cv2.CC_STAT_AREA] < noise_thresh:
                     alpha[labels == i] = 0
 
-        # Smart Smooth
+        
         alpha = cv2.GaussianBlur(alpha, (3, 3), 0)
         alpha = self.smooth_step_alpha(alpha)
 
@@ -96,16 +96,16 @@ class WorldClassRemover:
         Modes: 'remove_bg', 'blur_background', 'change_background'
         """
         try:
-            # Ensure temp dir exists
+            
             if not os.path.exists(TEMP_DIR):
                 os.makedirs(TEMP_DIR)
 
-            # Run core removal pipeline
+            
             original_rgb_pil, refined_alpha_np, original_size = self._run_core_removal(image_path)
             
-            # Process based on mode
+            
             if mode == 'remove_bg':
-                # Color Decontamination (ONLY for transparent background)
+                
                 rgb_np = np.array(original_rgb_pil)
                 foreground_mask = (refined_alpha_np > 240).astype(np.uint8)
                 
@@ -132,11 +132,11 @@ class WorldClassRemover:
             else:
                 raise ValueError(f"Unknown mode: {mode}")
 
-            # Resize to original size if needed
+            
             if final_img.size != original_size:
                 final_img = final_img.resize(original_size, Image.Resampling.LANCZOS)
             
-            # Save
+            
             fname = f"{mode}_{int(time.time()*1000)}.png"
             out_path = os.path.join(TEMP_DIR, fname)
             final_img.save(out_path, "PNG")
@@ -148,34 +148,34 @@ class WorldClassRemover:
 
     def _apply_blur_background(self, original_image_path, fg_rgb_pil, alpha_np, blur_radius):
         """Blur the original background and composite foreground."""
-        # Load original image at the same size as fg_rgb_pil
+        
         original_img = Image.open(original_image_path).convert("RGB")
         if original_img.size != fg_rgb_pil.size:
             original_img = original_img.resize(fg_rgb_pil.size, Image.Resampling.LANCZOS)
         
-        # Blur the entire original image
+        
         blurred_bg = original_img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
         
-        # Create alpha mask for compositing
+        
         alpha_mask = Image.fromarray(alpha_np, mode='L')
         
-        # Composite: foreground over blurred background
+        
         result = Image.composite(fg_rgb_pil, blurred_bg, alpha_mask)
         
         return result
 
     def _apply_new_background(self, fg_rgb_pil, alpha_np, new_bg_path):
         """Replace background with a new image."""
-        # Load new background
+        
         new_bg = Image.open(new_bg_path).convert("RGB")
         
-        # Resize to match foreground
+        
         new_bg_resized = new_bg.resize(fg_rgb_pil.size, Image.Resampling.LANCZOS)
         
-        # Create alpha mask
+        
         alpha_mask = Image.fromarray(alpha_np, mode='L')
         
-        # Composite: foreground over new background
+        
         result = Image.composite(fg_rgb_pil, new_bg_resized, alpha_mask)
         
         return result
@@ -195,7 +195,7 @@ class WorldClassRemover:
         dilated = cv2.dilate(channel, kernel, iterations=1)
         return np.where(mask == 1, channel, dilated)
 
-# Exposed wrapper
+
 def remove_bg(src, model='isnet-general-use', mode='remove_bg', blur_radius=15, new_bg_path=None):
     """
     Multi-mode background processing.

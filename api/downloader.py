@@ -25,7 +25,7 @@ def download(url, opts_json):
             res = opts_data['res']
             fps = opts_data['fps']
             
-            # Construct format string
+            
             fmt_str = "bestvideo"
             filters = []
             
@@ -53,14 +53,14 @@ def download(url, opts_json):
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'wav',
                 }]
-            else:  # mp3
+            else:  
                 ydl_opts['postprocessors'] = [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': br,
                 }]
         
-        # Handle playlists
+        
         if is_playlist:
             ydl_opts['noplaylist'] = False
         else:
@@ -71,7 +71,7 @@ def download(url, opts_json):
         
         _open_folder(folder)
         
-        # Return success message with track count if playlist
+        
         if is_playlist:
             return {'success': True, 'message': 'Playlist downloaded successfully!'}
         else:

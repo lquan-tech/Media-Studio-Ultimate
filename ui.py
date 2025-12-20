@@ -13,7 +13,7 @@ HTML_CONTENT = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Media Studio Ultimate 2.2</title>
+<title>Media Studio Ultimate 2.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     :root { --primary:#ff0055; --bg:#0a0e17; --card:#151b2e; --text:#fff; --text-dim:#999; }
@@ -135,7 +135,7 @@ HTML_CONTENT = """<!DOCTYPE html>
         <div style="position:absolute; top:20px; right:20px;">
            <button class="btn btn-sm btn-secondary" onclick="updateLibs()">Update Core</button>
         </div>
-        <h1>Media Studio Ultimate 2.2</h1>
+        <h1>Media Studio Ultimate 2.4</h1>
         <div class="tabs">
             <div class="tab active" onclick="switchTab('downloader')" id="tab-btn-downloader">Downloader</div>
             <div class="tab" onclick="switchTab('converter')" id="tab-btn-converter">Converter</div>
@@ -143,6 +143,7 @@ HTML_CONTENT = """<!DOCTYPE html>
             <div class="tab" onclick="switchTab('gifmaker')" id="tab-btn-gifmaker">Video to GIF</div>
             <div class="tab" onclick="switchTab('shortener')" id="tab-btn-shortener">Links & QR</div>
             <div class="tab" onclick="switchTab('bgremover')" id="tab-btn-bgremover">BG Remover(Beta)</div>
+            <div class="tab" onclick="switchTab('waveauth')" id="tab-btn-waveauth">WaveAuth</div>
         </div>
     </div>
 
@@ -162,7 +163,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <option value="audio">Audio (MP3/WAV)</option>
                         </select>
                         
-                        <!-- Video Options -->
+
                         <div id="dl-opt-video" class="row" style="margin-top:10px;">
                             <div class="col">
                                 <label class="label-title">Resolution</label>
@@ -185,7 +186,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
 
-                        <!-- Audio Options -->
+
                         <div id="dl-opt-audio" class="row" style="margin-top:10px; display:none;">
                             <div class="col">
                                 <label class="label-title">Audio Format</label>
@@ -204,7 +205,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
                         
-                        <!-- Playlist Mode -->
+
                         <div id="dl-playlist-info" style="display:none; margin-top:15px; padding:15px; background:#222; border-radius:10px; border-left:4px solid var(--primary);">
                             <div style="font-weight:bold; margin-bottom:5px; color:var(--primary);">📋 Playlist Detected</div>
                             <div id="pl-title" style="margin-bottom:3px;"></div>
@@ -246,14 +247,14 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- FORMAT SELECTION MODAL -->
+
     <div id="fmt-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeFmtModal()">&times;</span>
             <h2 style="text-align:center; margin-bottom:20px;">Select Target Format</h2>
             <input type="text" id="fmt-search-input" class="fmt-search" placeholder="Search format (e.g. mp3, mov, image)..." onkeyup="filterFormats()">
             <div id="fmt-container">
-                <!-- Populated by JS -->
+
             </div>
         </div>
     </div>
@@ -390,7 +391,7 @@ HTML_CONTENT = """<!DOCTYPE html>
             </div>
         </div>
         
-        <!-- MERGED QR DESIGNER -->
+
         <div id="qr-section-inner" style="margin-top:40px; border-top:1px solid #333; padding-top:20px;">
              <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">Advanced QR Designer</h2>
              <div class="qr-container">
@@ -404,13 +405,13 @@ HTML_CONTENT = """<!DOCTYPE html>
                     </div>
                     
                     <div class="config-body">
-                        <!-- CONTENT TAB -->
+
                         <div id="qt-content" class="config-tab active">
                             <label class="label-title">Website URL or Text</label>
                             <textarea id="avr-data" class="input-box" rows="5" placeholder="https://example.com" oninput="debounceAvr()"></textarea>
                         </div>
                         
-                        <!-- SHAPES TAB -->
+
                         <div id="qt-shapes" class="config-tab">
                             <label class="label-title">Data Modules</label>
                             <div class="shape-grid">
@@ -442,7 +443,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <input type="hidden" id="avr-shape" value="square">
                         </div>
                         
-                        <!-- COLORS TAB -->
+
                         <div id="qt-colors" class="config-tab">
                             <label class="label-title">Color Mode</label>
                             <div class="color-toggle">
@@ -483,7 +484,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
                         
-                        <!-- LOGO TAB -->
+
                         <div id="qt-logo" class="config-tab">
                              <label class="label-title">Upload Logo</label>
                              <div class="logo-upload-box" onclick="uploadAvrLogo()">
@@ -495,7 +496,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                     </div>
                 </div>
                 
-                <!-- RIGHT PREVIEW -->
+
                 <div class="qr-preview">
                     <h3 style="margin-bottom:20px; color:#aaa;">Preview</h3>
                     <div class="preview-box">
@@ -527,7 +528,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                 <div class="col">
                      <button class="btn" style="width:100%" onclick="bg_open()">Open Image</button>
                      <div style="margin:20px 0; text-align:center;">
-                         <!-- UPDATED CONTROLS -->
+                         
                          <div style="margin-bottom:15px; text-align:left; background:#1a1f2e; padding:15px; border-radius:10px; border:1px solid #333;">
                              <label class="label-title">AI Model</label>
                              <select id="bg-model" class="select-style">
@@ -548,6 +549,117 @@ HTML_CONTENT = """<!DOCTYPE html>
                      </div>
                      <div id="bg-status" class="status-text"></div>
                      <button class="btn btn-secondary" onclick="bg_save()" id="btn-bg-save" style="width:100%; margin-top:20px;" disabled>Download Result</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="waveauth" class="section">
+        <div class="card">
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">WaveAuth Audio Verifier v4.0</h2>
+            <div class="row">
+
+                <div class="col" style="flex:1; max-width:350px;">
+                     <div style="background:#222; padding:15px; border-radius:12px; height:100%; max-height:600px; display:flex; flex-direction:column;">
+                        <h4 style="margin-bottom:10px; color:#aaa;">Batch Queue</h4>
+                        
+                        <div style="display:flex; gap:5px; margin-bottom:10px;">
+                            <button class="btn btn-sm" onclick="wa_addFiles()" style="flex:1;">+ Add Files</button>
+                            <button class="btn btn-sm btn-secondary" onclick="wa_clearQ()">Clear</button>
+                        </div>
+                        
+                        <div id="wa-queue" style="flex:1; overflow-y:auto; background:#151b2e; border-radius:8px; padding:10px; margin-bottom:15px;">
+                            <div style="text-align:center; color:#555; font-size:0.9em;">Queue empty</div>
+                        </div>
+                        
+                        <button class="btn" onclick="wa_processQ()" id="wa-btn-run" disabled>Start Batch Processing</button>
+                        
+                        <hr style="border-color:#333; margin:15px 0;">
+                        
+                        <h4 style="margin-bottom:10px; color:#aaa;">History Repository</h4>
+                        
+
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.8em; color:#ddd; background:#111; padding:8px; border-radius:6px;">
+                            <div style="text-align:center;">Files<br><b id="wa-dash-files">0</b></div>
+                            <div style="text-align:center;">Avg Score<br><b id="wa-dash-score" style="color:var(--primary)">0.0</b></div>
+                            <div style="text-align:center;">Avg Time<br><b id="wa-dash-time">0s</b></div>
+                        </div>
+                        
+                        <div id="wa-history" style="flex:1; overflow-y:auto; background:#151b2e; border-radius:8px; padding:10px;">
+
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="wa_exportCSV()" style="margin-top:5px; width:100%;">Download Report (CSV)</button>
+                        <button class="btn btn-sm btn-secondary" onclick="wa_clearHistory()" style="margin-top:5px; width:100%;">Clear History</button>
+                        <button class="btn btn-sm btn-secondary" onclick="wa_clearTempImages()" style="margin-top:5px; width:100%; border:1px solid #444;">Clear Temp Images</button>
+                     </div>
+                </div>
+                
+
+                <div class="col" style="flex:2;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3 id="wa-filename" style="margin:0;">No file selected</h3>
+                        <div>
+                             <button class="btn btn-sm btn-secondary" onclick="wa_showRef()">Reference Examples</button>
+                             <button class="btn btn-sm btn-secondary" onclick="wa_exportImg()" id="wa-btn-export" disabled>Save Spectrogram</button>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-container" style="background:#000; height:300px; margin-bottom:20px; border:1px solid #333;">
+                        <img id="wa-spectrogram" class="media-preview" style="display:none; width:100%; height:100%; object-fit:contain;">
+                        <span id="wa-ph" style="color:#555;">Spectrogram will appear here</span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <div style="background:#222; padding:15px; border-radius:10px;">
+                                <label class="label-title">Analysis Result (v4.0)</label>
+                                <div id="wa-verdict" style="font-size:1.3em; font-weight:bold; color:var(--primary); margin-bottom:5px;">-</div>
+                                <div id="wa-score" style="font-size:1.5em; color:#fff;">Score: -</div>
+                                <div id="wa-reasons" style="margin-top:10px; font-size:0.9em; color:#ffaa00;">
+
+                                </div>
+                                <div style="margin-top:15px; font-size:0.8em; color:#888; border-top:1px solid #444; padding-top:10px; font-style:italic;">
+                                    * Verdicts are reference only. Spectrogram validation is 100% accurate.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div style="background:#222; padding:15px; border-radius:10px;">
+                                <label class="label-title">Technical Metrics</label>
+                                <div style="font-size:0.95em; color:#ccc;">
+                                    <div style="display:flex; justify-content:space-between;"><span>MP3 Profile:</span> <span id="wa-mp3" style="color:#00aaff">-</span></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Slope Metric:</span> <span id="wa-slope" style="color:#fff">-</span></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Bandwidth:</span> <span id="wa-bw" style="color:#fff">-</span></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Dyn Range:</span> <span id="wa-dr" style="color:#fff">-</span></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Format:</span> <span id="wa-fmt" style="color:#fff">-</span></div>
+                                    <div style="display:flex; justify-content:space-between;"><span>Duration:</span> <span id="wa-dur" style="color:#fff">-</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="wa-status" class="status-text" style="text-align:left; margin-left:5px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="wa-ref-modal" class="modal">
+        <div class="modal-content" style="max-width:1100px;">
+            <span class="close-modal" onclick="document.getElementById('wa-ref-modal').style.display='none'">&times;</span>
+            <h2 style="text-align:center; margin-bottom:20px;">WaveAuth Reference Examples</h2>
+            <p style="text-align:center; color:#aaa; margin-bottom:20px;">Compare your result with these baselines.</p>
+            <div class="row" style="text-align:center;">
+                <div class="col">
+                    <h3 style="color:#00ff88; margin-bottom:10px;">Example A</h3>
+                    <img src="http://127.0.0.1:8000/stream?path=d:/Git%20Clone%20Folder/Media-Downloader/screenshots/E1.png" style="width:100%; border:2px solid #333; border-radius:8px;">
+                     <p style="margin-top:5px; color:#888;">Example 1</p>
+                </div>
+                <div class="col">
+                    <h3 style="color:#ff0055; margin-bottom:10px;">Example B</h3>
+                     <img src="http://127.0.0.1:8000/stream?path=d:/Git%20Clone%20Folder/Media-Downloader/screenshots/E2.png" style="width:100%; border:2px solid #333; border-radius:8px;">
+                     <p style="margin-top:5px; color:#888;">Example 2</p>
                 </div>
             </div>
         </div>
@@ -1261,6 +1373,270 @@ HTML_CONTENT = """<!DOCTYPE html>
              if(res.success) alert("Saved!");
         }
     }
+    // --- WAVEAUTH START v4.0 ---
+    let waFiles = [];
+    let waCurrentData = null; 
+
+    async function wa_addFiles() {
+        const f = await window.pywebview.api.choose_files(true);
+        if(f) {
+            waFiles = [...waFiles, ...f];
+            wa_updateQ();
+        }
+    }
+    
+    function wa_clearQ() {
+        waFiles = [];
+        wa_updateQ();
+    }
+    
+    function wa_removeQ(idx) {
+        waFiles.splice(idx, 1);
+        wa_updateQ();
+    }
+    
+    function wa_updateQ() {
+        const q = document.getElementById('wa-queue');
+        if(waFiles.length === 0) {
+            q.innerHTML = '<div style="text-align:center; color:#555; font-size:0.9em;">Queue empty</div>';
+            document.getElementById('wa-btn-run').disabled = true;
+            return;
+        }
+        
+        q.innerHTML = waFiles.map((f, i) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#222; padding:8px; margin-bottom:5px; border-radius:6px; font-size:0.85em;">
+                <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">${f.split(/[\\\\/]/).pop()}</div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <span style="color:#888; font-size:0.8em;" id="wa-q-status-${i}">Pending</span>
+                    <button style="background:none; border:none; color:#ff5555; cursor:pointer; font-weight:bold;" onclick="wa_removeQ(${i})" title="Remove">×</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('wa-btn-run').disabled = false;
+    }
+    
+    async function wa_processQ() {
+        if(waFiles.length === 0) return;
+        
+        const btn = document.getElementById('wa-btn-run');
+        const status = document.getElementById('wa-status');
+        btn.disabled = true;
+        status.innerText = "Starting Batch...";
+        
+        // Copy queue logic processed one by one
+        let processed = 0;
+        // Disable remove buttons during processing
+        const removeBtns = document.querySelectorAll('#wa-queue button');
+        removeBtns.forEach(b => b.disabled = true);
+        
+        for(let i=0; i<waFiles.length; i++) {
+            const f = waFiles[i];
+            const statEl = document.getElementById(`wa-q-status-${i}`);
+            statEl.style.color = "#00aaff";
+            statEl.innerText = "Running...";
+            status.innerText = `Analyzing ${i+1}/${waFiles.length}: ${f.split(/[\\\\/]/).pop()}...`;
+            
+            try {
+                const res = await window.pywebview.api.wa_analyze(f);
+                if(res.success) {
+                    statEl.style.color = "#00ff88";
+                    statEl.innerText = "Done";
+                    wa_render(res);
+                } else {
+                    statEl.style.color = "#ff0055";
+                    statEl.innerText = "Error";
+                    console.error(res.error);
+                }
+            } catch(e) {
+                 statEl.style.color = "#ff0055";
+                 statEl.innerText = "Fail";
+            }
+            
+            processed++;
+            wa_loadHistory();
+        }
+        
+        // Safe Queue Clearing as requested
+        waFiles = [];
+        wa_updateQ();
+        
+        btn.disabled = false;
+        status.innerText = `Batch Complete. Processed ${processed} files.`;
+    }
+    
+    function wa_render(data) {
+        waCurrentData = data;
+        document.getElementById('wa-filename').innerText = data.filename;
+        document.getElementById('wa-verdict').innerText = data.verdict;
+        document.getElementById('wa-score').innerText = `Score: ${data.score}/100`;
+        
+        const v = document.getElementById('wa-score');
+        if(data.score >= 90) v.style.color = "#00ff88"; 
+        else if(data.score >= 70) v.style.color = "#ffaa00"; 
+        else v.style.color = "#ff0055"; 
+        
+        // Detailed Metrics
+        document.getElementById('wa-slope').innerText = data.metrics ? data.metrics.slope_metric : "-";
+        document.getElementById('wa-bw').innerText = data.metrics ? data.metrics.bandwidth_ratio : "-";
+        document.getElementById('wa-dr').innerText = data.metrics ? data.metrics.dynamic_range + " dB" : "-";
+        document.getElementById('wa-fmt').innerText = data.format || "-";
+        document.getElementById('wa-mp3').innerText = data.mp3_profile || "-";
+        
+        let cutoffDisplay = "-";
+        if(data.cutoff_freq_hz) cutoffDisplay = data.cutoff_freq_hz + " Hz";
+        else if(data.cutoff) cutoffDisplay = data.cutoff;
+        
+        document.getElementById('wa-dur').innerHTML = Math.round(data.duration) + "s <br><span style='font-size:0.8em; color:#888;'>Cutoff: " + cutoffDisplay + "</span>";
+        
+        // Reasons
+        const reasonslist = document.getElementById('wa-reasons');
+        if(data.reasons && data.reasons.length > 0) {
+            reasonslist.innerHTML = data.reasons.map(r => `<div>• ${r}</div>`).join('');
+        } else {
+            reasonslist.innerHTML = "";
+        }
+        
+        const img = document.getElementById('wa-spectrogram');
+        img.src = "data:image/png;base64," + data.spectrogram;
+        img.style.display = 'block';
+        document.getElementById('wa-ph').style.display = 'none';
+        
+        document.getElementById('wa-btn-export').disabled = false;
+    }
+    
+    async function wa_loadHistory() {
+        const hist = await window.pywebview.api.wa_history();
+        const container = document.getElementById('wa-history');
+        
+        // Dashboard Stats
+        let total = hist.length;
+        let avgScore = 0;
+        let avgTime = 0;
+        
+        if(total > 0) {
+            avgScore = hist.reduce((sum, h) => sum + (h.score||0), 0) / total;
+            const times = hist.map(h => parseFloat((h.process_time||"0").replace('s','')));
+            avgTime = times.reduce((sum, t) => sum + t, 0) / total;
+        }
+        
+        document.getElementById('wa-dash-files').innerText = total;
+        document.getElementById('wa-dash-score').innerText = avgScore.toFixed(1);
+        document.getElementById('wa-dash-time').innerText = avgTime.toFixed(2) + "s";
+        
+        if(!hist || hist.length === 0) {
+            container.innerHTML = '<div style="color:#555; text-align:center; font-size:0.9em; padding:10px;">No history</div>';
+            return;
+        }
+        
+        container.innerHTML = hist.map(item => `
+            <div style="background:#222; border-bottom:1px solid #333; padding:8px; font-size:0.85em; cursor:pointer;" onclick='wa_render_hist(${JSON.stringify(item).replace(/'/g, "&#39;")})'>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold; color:#ccc; max-width:140px; overflow:hidden; text-overflow:ellipsis;">${item.filename}</span>
+                    <span style="${item.score>=90?'color:#00ff88':(item.score>=50?'color:#ffaa00':'color:#ff0055')}">${item.score}/100</span>
+                </div>
+                <div style="font-size:0.9em; color:#666;">${item.verdict}</div>
+            </div>
+        `).join('');
+    }
+    
+    function wa_render_hist(item) {
+        waCurrentData = null; 
+        
+        document.getElementById('wa-filename').innerText = item.filename;
+        document.getElementById('wa-verdict').innerText = item.verdict;
+        document.getElementById('wa-score').innerText = `Score: ${item.score}/100`;
+        
+        const v = document.getElementById('wa-score');
+        if(item.score >= 90) v.style.color = "#00ff88"; 
+        else if(item.score >= 70) v.style.color = "#ffaa00"; 
+        else v.style.color = "#ff0055";
+        
+        document.getElementById('wa-slope').innerText = item.metrics ? item.metrics.slope_metric : "-";
+        document.getElementById('wa-bw').innerText = item.metrics ? item.metrics.bandwidth_ratio : "-";
+        document.getElementById('wa-dr').innerText = item.metrics ? item.metrics.dynamic_range + " dB" : "-";
+        document.getElementById('wa-fmt').innerText = item.format || "-";
+        document.getElementById('wa-mp3').innerText = item.mp3_profile || "-";
+        
+        let cutoffDisplay = "-";
+        if(item.cutoff_freq_hz) cutoffDisplay = item.cutoff_freq_hz + " Hz";
+        else if(item.cutoff) cutoffDisplay = item.cutoff;
+        
+        document.getElementById('wa-dur').innerHTML = Math.round(item.duration) + "s <br><span style='font-size:0.8em; color:#888;'>Cutoff: " + cutoffDisplay + "</span>";
+
+        const reasonslist = document.getElementById('wa-reasons');
+        if(item.reasons && item.reasons.length > 0) {
+            reasonslist.innerHTML = item.reasons.map(r => `<div>• ${r}</div>`).join('');
+        } else {
+             reasonslist.innerHTML = "";
+        }
+        
+        const img = document.getElementById('wa-spectrogram');
+        const ph = document.getElementById('wa-ph');
+        
+        // Safety Clear
+        img.src = ""; 
+        img.style.display = 'none';
+        
+        if (item.temp_image) {
+             const timeToken = new Date().getTime(); // Anti-cache
+             img.src = "http://127.0.0.1:8000/stream?path=" + encodeURIComponent(item.temp_image) + "&t=" + timeToken;
+             img.style.display = 'block';
+             ph.style.display = 'none';
+        } else {
+            // Explicitly ensure it's hidden and src is empty
+            img.style.display = 'none';
+            ph.style.display = 'block';
+            ph.innerText = "Spectrogram not saved in history";
+        }
+        
+        document.getElementById('wa-btn-export').disabled = true;
+    }
+
+    async function wa_clearHistory() {
+        await window.pywebview.api.wa_clear();
+        wa_loadHistory();
+    }
+    
+    function wa_showRef() {
+        document.getElementById('wa-ref-modal').style.display = 'block';
+    }
+    
+    function wa_exportImg() {
+        if(!waCurrentData || !waCurrentData.spectrogram) return;
+        const a = document.createElement('a');
+        a.href = "data:image/png;base64," + waCurrentData.spectrogram;
+        a.download = `spectrogram_${waCurrentData.filename}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    async function wa_exportCSV() {
+        const csvContent = await window.pywebview.api.wa_export_csv();
+        if(!csvContent) { alert("No history to export"); return; }
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audio_report_${new Date().getTime()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    async function wa_clearTempImages() {
+        if(!confirm("Delete all temporary analysis images?")) return;
+        const res = await window.pywebview.api.wa_clear_temp();
+        if(res) alert("Temp images cleared.");
+        else alert("Failed to clear temp images.");
+    }
+    
+    // Init History on load
+    window.addEventListener('DOMContentLoaded', () => {
+        wa_loadHistory();
+    });
+    // --- WAVEAUTH END ---
 </script>
 </body>
 </html>
