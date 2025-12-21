@@ -1,4 +1,4 @@
-# Media Studio Ultimate 2.3
+# Media Studio Ultimate 2.4
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
@@ -46,6 +46,14 @@ Beautiful Modern UI • Batch Processing • Visual Crop Editor • 60+ Format S
 - Instant preview of result
 - Batch compatible (via API, UI handles single file for now)
 - High-quality transparency output (PNG)
+
+### 🎵 WaveAuth Audio Verifier
+- **Enterprise-grade analysis** for Lossless vs Lossy identification
+- **MP3 Profile Detection**: Guess bitrate (128/192/320kbps) using heuristics
+- **180s Deep Scan**: Analyzes start, middle, and end for maximum accuracy
+- **Visual Spectrogram**: 100% accurate spectral display
+- **History Dashboard**: Track your verification capability
+- **CSV Export**: Generate professional reports
 
 ### 🎨 Video to GIF Maker
 - Convert any video segment to high-quality animated GIF
@@ -217,10 +225,10 @@ MediaStudioUltimate/
 ### `install_libs.bat` - First Time Setup
 ```batch
 @echo off
-title Install Dependencies - Media Studio Ultimate 2.3
+title Install Dependencies - Media Studio Ultimate 2.4
 color 0A
 echo ========================================
-echo  Media Studio Ultimate 2.3
+echo  Media Studio Ultimate 2.4
 echo  Dependency Installer
 echo ========================================
 echo.
@@ -244,10 +252,10 @@ pause
 ### `run.bat` - Quick Launcher
 ```batch
 @echo off
-title Media Studio Ultimate 2.3
+title Media Studio Ultimate 2.4
 color 0B
 echo ========================================
-echo  Media Studio Ultimate 2.3
+echo  Media Studio Ultimate 2.4
 echo  Starting application...
 echo ========================================
 echo.
@@ -336,19 +344,17 @@ pause
 
 ## 📝 Changelog
 
-### Version 2.3 (Current)
+### Version 2.4 (Current)
+- 🎵 **WaveAuth v4.0**: Enterprise-grade audio verification with 180s Deep Scan
+- 🔍 **MP3 Profile**: Auto-detects likely MP3 bitrate (128/192/320kbps)
+- 🎨 **Deep QR**: Advanced QR designer with gradients, custom shapes, and logos
+- ✨ **Improved UI**: Cleaner interface, new feedback/status messages
+- 🐛 **Fixes**: Resolved history display issues and optimized loading
 - ✨ Added Universal Converter with 60+ formats
 - ✨ Added Visual Editor with interactive crop
 - ✨ Added GIF Maker with trim and crop
-- ✨ Visual format selector with search
-- ✨ Batch conversion support
-- ✨ Real-time preview for all media
-- ✨ Added `install_libs.bat` for easy setup
-- ✨ Added `run.bat` for quick launch
-- 🎭 Added **Background Remover** 
+- 🎭 Added **Background Remover**
 - 🎨 Modern dark theme UI redesign
-- 🎨 Smooth animations and transitions
-- 🐛 Various bug fixes and improvements
 
 ---
 

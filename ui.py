@@ -13,7 +13,7 @@ HTML_CONTENT = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Media Studio Ultimate 2.2</title>
+<title>Media Studio Ultimate 2.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     :root { --primary:#ff0055; --bg:#0a0e17; --card:#151b2e; --text:#fff; --text-dim:#999; }
@@ -135,7 +135,7 @@ HTML_CONTENT = """<!DOCTYPE html>
         <div style="position:absolute; top:20px; right:20px;">
            <button class="btn btn-sm btn-secondary" onclick="updateLibs()">Update Core</button>
         </div>
-        <h1>Media Studio Ultimate 2.2</h1>
+        <h1>Media Studio Ultimate 2.4</h1>
         <div class="tabs">
             <div class="tab active" onclick="switchTab('downloader')" id="tab-btn-downloader">Downloader</div>
             <div class="tab" onclick="switchTab('converter')" id="tab-btn-converter">Converter</div>
@@ -143,7 +143,6 @@ HTML_CONTENT = """<!DOCTYPE html>
             <div class="tab" onclick="switchTab('gifmaker')" id="tab-btn-gifmaker">Video to GIF</div>
             <div class="tab" onclick="switchTab('shortener')" id="tab-btn-shortener">Links & QR</div>
             <div class="tab" onclick="switchTab('bgremover')" id="tab-btn-bgremover">BG Remover(Beta)</div>
-            <div class="tab" onclick="switchTab('studio')" id="tab-btn-studio">A/V Studio</div>
         </div>
     </div>
 
@@ -163,7 +162,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <option value="audio">Audio (MP3/WAV)</option>
                         </select>
                         
-                        <!-- Video Options -->
+
                         <div id="dl-opt-video" class="row" style="margin-top:10px;">
                             <div class="col">
                                 <label class="label-title">Resolution</label>
@@ -186,7 +185,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
 
-                        <!-- Audio Options -->
+
                         <div id="dl-opt-audio" class="row" style="margin-top:10px; display:none;">
                             <div class="col">
                                 <label class="label-title">Audio Format</label>
@@ -205,7 +204,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
                         
-                        <!-- Playlist Mode -->
+
                         <div id="dl-playlist-info" style="display:none; margin-top:15px; padding:15px; background:#222; border-radius:10px; border-left:4px solid var(--primary);">
                             <div style="font-weight:bold; margin-bottom:5px; color:var(--primary);">📋 Playlist Detected</div>
                             <div id="pl-title" style="margin-bottom:3px;"></div>
@@ -247,14 +246,14 @@ HTML_CONTENT = """<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- FORMAT SELECTION MODAL -->
+
     <div id="fmt-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeFmtModal()">&times;</span>
             <h2 style="text-align:center; margin-bottom:20px;">Select Target Format</h2>
             <input type="text" id="fmt-search-input" class="fmt-search" placeholder="Search format (e.g. mp3, mov, image)..." onkeyup="filterFormats()">
             <div id="fmt-container">
-                <!-- Populated by JS -->
+
             </div>
         </div>
     </div>
@@ -391,7 +390,7 @@ HTML_CONTENT = """<!DOCTYPE html>
             </div>
         </div>
         
-        <!-- MERGED QR DESIGNER -->
+
         <div id="qr-section-inner" style="margin-top:40px; border-top:1px solid #333; padding-top:20px;">
              <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">Advanced QR Designer</h2>
              <div class="qr-container">
@@ -405,13 +404,13 @@ HTML_CONTENT = """<!DOCTYPE html>
                     </div>
                     
                     <div class="config-body">
-                        <!-- CONTENT TAB -->
+
                         <div id="qt-content" class="config-tab active">
                             <label class="label-title">Website URL or Text</label>
                             <textarea id="avr-data" class="input-box" rows="5" placeholder="https://example.com" oninput="debounceAvr()"></textarea>
                         </div>
                         
-                        <!-- SHAPES TAB -->
+
                         <div id="qt-shapes" class="config-tab">
                             <label class="label-title">Data Modules</label>
                             <div class="shape-grid">
@@ -443,7 +442,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             <input type="hidden" id="avr-shape" value="square">
                         </div>
                         
-                        <!-- COLORS TAB -->
+
                         <div id="qt-colors" class="config-tab">
                             <label class="label-title">Color Mode</label>
                             <div class="color-toggle">
@@ -484,7 +483,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                             </div>
                         </div>
                         
-                        <!-- LOGO TAB -->
+
                         <div id="qt-logo" class="config-tab">
                              <label class="label-title">Upload Logo</label>
                              <div class="logo-upload-box" onclick="uploadAvrLogo()">
@@ -496,7 +495,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                     </div>
                 </div>
                 
-                <!-- RIGHT PREVIEW -->
+
                 <div class="qr-preview">
                     <h3 style="margin-bottom:20px; color:#aaa;">Preview</h3>
                     <div class="preview-box">
@@ -528,7 +527,7 @@ HTML_CONTENT = """<!DOCTYPE html>
                 <div class="col">
                      <button class="btn" style="width:100%" onclick="bg_open()">Open Image</button>
                      <div style="margin:20px 0; text-align:center;">
-                         <!-- UPDATED CONTROLS -->
+                         
                          <div style="margin-bottom:15px; text-align:left; background:#1a1f2e; padding:15px; border-radius:10px; border:1px solid #333;">
                              <label class="label-title">AI Model</label>
                              <select id="bg-model" class="select-style">
@@ -553,95 +552,6 @@ HTML_CONTENT = """<!DOCTYPE html>
             </div>
         </div>
     </div>
-
-    <!-- STUDIO SECTION (Advanced) -->
-    <div id="studio" class="section">
-        <div class="card">
-            <h2 style="text-align:center; color:var(--primary); margin-bottom:15px;">Advanced A/V Studio</h2>
-            
-            <!-- File Loader -->
-            <div id="std-loader" class="logo-upload-box" onclick="stdOpen()">
-                <div style="font-size:3em">🎵 / 🎬</div>
-                <div>Click to Open Audio or Video</div>
-            </div>
-            
-            <!-- Editor Interface -->
-            <div id="std-editor" style="display:none;">
-                <h3 id="std-filename" style="text-align:center; margin-bottom:10px;">filename.mp3</h3>
-                
-                <!-- PREVIEW -->
-                <div style="background:#000; padding:10px; border-radius:10px; text-align:center; margin-bottom:20px;">
-                    <video id="std-vid" controls style="width:100%; max-height:300px; display:none;"></video>
-                    <audio id="std-aud" controls style="width:100%; display:none;"></audio>
-                </div>
-                
-                <div class="row">
-                    <!-- LEFT COLUMN: Trim & Convert -->
-                    <div class="col">
-                        <label class="label-title">TRIM (Seconds)</label>
-                        <div style="display:flex; gap:10px; margin-bottom:20px;">
-                            <div style="flex:1">
-                                <span style="color:#888; font-size:0.8em;">Start</span>
-                                <input type="number" id="std-start" value="0" step="0.1" class="input-box" style="padding:10px;">
-                            </div>
-                            <div style="flex:1">
-                                <span style="color:#888; font-size:0.8em;">End</span>
-                                <input type="number" id="std-end" value="0" step="0.1" class="input-box" style="padding:10px;">
-                            </div>
-                        </div>
-                        
-                        <label class="label-title">FORMAT</label>
-                        <select id="std-fmt" class="select-style">
-                            <optgroup label="Audio">
-                                <option value="mp3">MP3 (Universal)</option>
-                                <option value="m4r">iPhone Ringtone</option>
-                                <option value="wav">WAV (Lossless)</option>
-                                <option value="flac">FLAC</option>
-                            </optgroup>
-                            <optgroup label="Video">
-                                <option value="mp4">MP4 (Universal)</option>
-                                <option value="mkv">MKV</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    
-                    <!-- RIGHT COLUMN: Effects -->
-                    <div class="col">
-                        <label class="label-title">EFFECTS</label>
-                        <div style="background:#1a1f2e; padding:15px; border-radius:10px; margin-bottom:15px;">
-                            <label style="display:flex; align-items:center; margin-bottom:10px; cursor:pointer;">
-                                <input type="checkbox" id="std-fade-in" style="width:18px; height:18px; margin-right:10px; accent-color:var(--primary);">
-                                Fade In (3s)
-                            </label>
-                            <label style="display:flex; align-items:center; cursor:pointer;">
-                                <input type="checkbox" id="std-fade-out" style="width:18px; height:18px; margin-right:10px; accent-color:var(--primary);">
-                                Fade Out (3s)
-                            </label>
-                        </div>
-                        
-                        <label class="label-title">AUDIO MOD (0.5x - 2.0x)</label>
-                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-                            <span style="width:60px;">Volume:</span>
-                            <input type="range" id="std-vol" min="0" max="2" step="0.1" value="1" style="flex:1; accent-color:var(--primary);">
-                            <span id="std-vol-val">1.0x</span>
-                        </div>
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="width:60px;">Speed:</span>
-                            <input type="range" id="std-spd" min="0.5" max="2" step="0.5" value="1" style="flex:1; accent-color:var(--primary);">
-                            <span id="std-spd-val">1.0x</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-top:20px; border-top:1px solid #333; padding-top:20px; text-align:right;">
-                    <span id="std-status" class="status-text" style="margin-right:20px;"></span>
-                    <button class="btn" onclick="stdProcess()">Process & Save</button>
-                    <button class="btn btn-secondary" onclick="stdReset()">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <script>
     // --- STUDIO LOGIC ---
     let stdFile = null;
@@ -1439,6 +1349,270 @@ HTML_CONTENT = """<!DOCTYPE html>
              if(res.success) alert("Saved!");
         }
     }
+    // --- WAVEAUTH START v4.0 ---
+    let waFiles = [];
+    let waCurrentData = null; 
+
+    async function wa_addFiles() {
+        const f = await window.pywebview.api.choose_files(true);
+        if(f) {
+            waFiles = [...waFiles, ...f];
+            wa_updateQ();
+        }
+    }
+    
+    function wa_clearQ() {
+        waFiles = [];
+        wa_updateQ();
+    }
+    
+    function wa_removeQ(idx) {
+        waFiles.splice(idx, 1);
+        wa_updateQ();
+    }
+    
+    function wa_updateQ() {
+        const q = document.getElementById('wa-queue');
+        if(waFiles.length === 0) {
+            q.innerHTML = '<div style="text-align:center; color:#555; font-size:0.9em;">Queue empty</div>';
+            document.getElementById('wa-btn-run').disabled = true;
+            return;
+        }
+        
+        q.innerHTML = waFiles.map((f, i) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#222; padding:8px; margin-bottom:5px; border-radius:6px; font-size:0.85em;">
+                <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">${f.split(/[\\\\/]/).pop()}</div>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <span style="color:#888; font-size:0.8em;" id="wa-q-status-${i}">Pending</span>
+                    <button style="background:none; border:none; color:#ff5555; cursor:pointer; font-weight:bold;" onclick="wa_removeQ(${i})" title="Remove">×</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('wa-btn-run').disabled = false;
+    }
+    
+    async function wa_processQ() {
+        if(waFiles.length === 0) return;
+        
+        const btn = document.getElementById('wa-btn-run');
+        const status = document.getElementById('wa-status');
+        btn.disabled = true;
+        status.innerText = "Starting Batch...";
+        
+        // Copy queue logic processed one by one
+        let processed = 0;
+        // Disable remove buttons during processing
+        const removeBtns = document.querySelectorAll('#wa-queue button');
+        removeBtns.forEach(b => b.disabled = true);
+        
+        for(let i=0; i<waFiles.length; i++) {
+            const f = waFiles[i];
+            const statEl = document.getElementById(`wa-q-status-${i}`);
+            statEl.style.color = "#00aaff";
+            statEl.innerText = "Running...";
+            status.innerText = `Analyzing ${i+1}/${waFiles.length}: ${f.split(/[\\\\/]/).pop()}...`;
+            
+            try {
+                const res = await window.pywebview.api.wa_analyze(f);
+                if(res.success) {
+                    statEl.style.color = "#00ff88";
+                    statEl.innerText = "Done";
+                    wa_render(res);
+                } else {
+                    statEl.style.color = "#ff0055";
+                    statEl.innerText = "Error";
+                    console.error(res.error);
+                }
+            } catch(e) {
+                 statEl.style.color = "#ff0055";
+                 statEl.innerText = "Fail";
+            }
+            
+            processed++;
+            wa_loadHistory();
+        }
+        
+        // Safe Queue Clearing as requested
+        waFiles = [];
+        wa_updateQ();
+        
+        btn.disabled = false;
+        status.innerText = `Batch Complete. Processed ${processed} files.`;
+    }
+    
+    function wa_render(data) {
+        waCurrentData = data;
+        document.getElementById('wa-filename').innerText = data.filename;
+        document.getElementById('wa-verdict').innerText = data.verdict;
+        document.getElementById('wa-score').innerText = `Score: ${data.score}/100`;
+        
+        const v = document.getElementById('wa-score');
+        if(data.score >= 90) v.style.color = "#00ff88"; 
+        else if(data.score >= 70) v.style.color = "#ffaa00"; 
+        else v.style.color = "#ff0055"; 
+        
+        // Detailed Metrics
+        document.getElementById('wa-slope').innerText = data.metrics ? data.metrics.slope_metric : "-";
+        document.getElementById('wa-bw').innerText = data.metrics ? data.metrics.bandwidth_ratio : "-";
+        document.getElementById('wa-dr').innerText = data.metrics ? data.metrics.dynamic_range + " dB" : "-";
+        document.getElementById('wa-fmt').innerText = data.format || "-";
+        document.getElementById('wa-mp3').innerText = data.mp3_profile || "-";
+        
+        let cutoffDisplay = "-";
+        if(data.cutoff_freq_hz) cutoffDisplay = data.cutoff_freq_hz + " Hz";
+        else if(data.cutoff) cutoffDisplay = data.cutoff;
+        
+        document.getElementById('wa-dur').innerHTML = Math.round(data.duration) + "s <br><span style='font-size:0.8em; color:#888;'>Cutoff: " + cutoffDisplay + "</span>";
+        
+        // Reasons
+        const reasonslist = document.getElementById('wa-reasons');
+        if(data.reasons && data.reasons.length > 0) {
+            reasonslist.innerHTML = data.reasons.map(r => `<div>• ${r}</div>`).join('');
+        } else {
+            reasonslist.innerHTML = "";
+        }
+        
+        const img = document.getElementById('wa-spectrogram');
+        img.src = "data:image/png;base64," + data.spectrogram;
+        img.style.display = 'block';
+        document.getElementById('wa-ph').style.display = 'none';
+        
+        document.getElementById('wa-btn-export').disabled = false;
+    }
+    
+    async function wa_loadHistory() {
+        const hist = await window.pywebview.api.wa_history();
+        const container = document.getElementById('wa-history');
+        
+        // Dashboard Stats
+        let total = hist.length;
+        let avgScore = 0;
+        let avgTime = 0;
+        
+        if(total > 0) {
+            avgScore = hist.reduce((sum, h) => sum + (h.score||0), 0) / total;
+            const times = hist.map(h => parseFloat((h.process_time||"0").replace('s','')));
+            avgTime = times.reduce((sum, t) => sum + t, 0) / total;
+        }
+        
+        document.getElementById('wa-dash-files').innerText = total;
+        document.getElementById('wa-dash-score').innerText = avgScore.toFixed(1);
+        document.getElementById('wa-dash-time').innerText = avgTime.toFixed(2) + "s";
+        
+        if(!hist || hist.length === 0) {
+            container.innerHTML = '<div style="color:#555; text-align:center; font-size:0.9em; padding:10px;">No history</div>';
+            return;
+        }
+        
+        container.innerHTML = hist.map(item => `
+            <div style="background:#222; border-bottom:1px solid #333; padding:8px; font-size:0.85em; cursor:pointer;" onclick='wa_render_hist(${JSON.stringify(item).replace(/'/g, "&#39;")})'>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-weight:bold; color:#ccc; max-width:140px; overflow:hidden; text-overflow:ellipsis;">${item.filename}</span>
+                    <span style="${item.score>=90?'color:#00ff88':(item.score>=50?'color:#ffaa00':'color:#ff0055')}">${item.score}/100</span>
+                </div>
+                <div style="font-size:0.9em; color:#666;">${item.verdict}</div>
+            </div>
+        `).join('');
+    }
+    
+    function wa_render_hist(item) {
+        waCurrentData = null; 
+        
+        document.getElementById('wa-filename').innerText = item.filename;
+        document.getElementById('wa-verdict').innerText = item.verdict;
+        document.getElementById('wa-score').innerText = `Score: ${item.score}/100`;
+        
+        const v = document.getElementById('wa-score');
+        if(item.score >= 90) v.style.color = "#00ff88"; 
+        else if(item.score >= 70) v.style.color = "#ffaa00"; 
+        else v.style.color = "#ff0055";
+        
+        document.getElementById('wa-slope').innerText = item.metrics ? item.metrics.slope_metric : "-";
+        document.getElementById('wa-bw').innerText = item.metrics ? item.metrics.bandwidth_ratio : "-";
+        document.getElementById('wa-dr').innerText = item.metrics ? item.metrics.dynamic_range + " dB" : "-";
+        document.getElementById('wa-fmt').innerText = item.format || "-";
+        document.getElementById('wa-mp3').innerText = item.mp3_profile || "-";
+        
+        let cutoffDisplay = "-";
+        if(item.cutoff_freq_hz) cutoffDisplay = item.cutoff_freq_hz + " Hz";
+        else if(item.cutoff) cutoffDisplay = item.cutoff;
+        
+        document.getElementById('wa-dur').innerHTML = Math.round(item.duration) + "s <br><span style='font-size:0.8em; color:#888;'>Cutoff: " + cutoffDisplay + "</span>";
+
+        const reasonslist = document.getElementById('wa-reasons');
+        if(item.reasons && item.reasons.length > 0) {
+            reasonslist.innerHTML = item.reasons.map(r => `<div>• ${r}</div>`).join('');
+        } else {
+             reasonslist.innerHTML = "";
+        }
+        
+        const img = document.getElementById('wa-spectrogram');
+        const ph = document.getElementById('wa-ph');
+        
+        // Safety Clear
+        img.src = ""; 
+        img.style.display = 'none';
+        
+        if (item.temp_image) {
+             const timeToken = new Date().getTime(); // Anti-cache
+             img.src = "http://127.0.0.1:8000/stream?path=" + encodeURIComponent(item.temp_image) + "&t=" + timeToken;
+             img.style.display = 'block';
+             ph.style.display = 'none';
+        } else {
+            // Explicitly ensure it's hidden and src is empty
+            img.style.display = 'none';
+            ph.style.display = 'block';
+            ph.innerText = "Spectrogram not saved in history";
+        }
+        
+        document.getElementById('wa-btn-export').disabled = true;
+    }
+
+    async function wa_clearHistory() {
+        await window.pywebview.api.wa_clear();
+        wa_loadHistory();
+    }
+    
+    function wa_showRef() {
+        document.getElementById('wa-ref-modal').style.display = 'block';
+    }
+    
+    function wa_exportImg() {
+        if(!waCurrentData || !waCurrentData.spectrogram) return;
+        const a = document.createElement('a');
+        a.href = "data:image/png;base64," + waCurrentData.spectrogram;
+        a.download = `spectrogram_${waCurrentData.filename}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    async function wa_exportCSV() {
+        const csvContent = await window.pywebview.api.wa_export_csv();
+        if(!csvContent) { alert("No history to export"); return; }
+        
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `audio_report_${new Date().getTime()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+    async function wa_clearTempImages() {
+        if(!confirm("Delete all temporary analysis images?")) return;
+        const res = await window.pywebview.api.wa_clear_temp();
+        if(res) alert("Temp images cleared.");
+        else alert("Failed to clear temp images.");
+    }
+    
+    // Init History on load
+    window.addEventListener('DOMContentLoaded', () => {
+        wa_loadHistory();
+    });
+    // --- WAVEAUTH END ---
 </script>
 </body>
 </html>
