@@ -1,10 +1,3 @@
-"""
-Startup Performance Profiler for Media Downloader
-
-Measures startup time and memory usage to quantify optimization impact.
-Supports both baseline and optimized profiling with statistical analysis.
-"""
-
 import time
 import sys
 import tracemalloc
@@ -17,7 +10,6 @@ from pathlib import Path
 
 
 def profile_startup(iterations: int = 10) -> Dict:
-    """Profile startup time and memory usage"""
     print(f"Profiling startup performance ({iterations} iterations)...")
     
     startup_times = []
@@ -26,7 +18,6 @@ def profile_startup(iterations: int = 10) -> Dict:
     for i in range(iterations):
         print(f"  Iteration {i+1}/{iterations}...", end='\r')
         
-        # Track Python memory allocation
         tracemalloc.start()
         process = psutil.Process()
         start_rss = process.memory_info().rss

@@ -4,15 +4,12 @@ import time
 import sys
 import os
 
-# Feature flag for lazy imports
 USE_LAZY_IMPORTS = os.getenv('LAZY_IMPORTS', 'true').lower() == 'true'
 
 if USE_LAZY_IMPORTS:
     from lazy_import import lazy_import
-    # Import only lightweight base module at startup
     from api import base
 else:
-    # Fallback to eager imports (for rollback if needed)
     from api import base, downloader, converter, editor, gif, shortener, bg_remover, wave_auth
 
 from server import run_server
@@ -20,53 +17,45 @@ import ui
 
 class Api:
     def __init__(self):
-        # Module cache flags
         self._modules_loaded = set()
     
     def _get_downloader(self):
-        """Lazy load downloader module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('downloader', lambda: __import__('api.downloader', fromlist=['downloader']), 'Downloader (yt-dlp)')
         else:
             return downloader
     
     def _get_converter(self):
-        """Lazy load converter module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('converter', lambda: __import__('api.converter', fromlist=['converter']), 'Converter (FFmpeg)')
         else:
             return converter
     
     def _get_editor(self):
-        """Lazy load editor module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('editor', lambda: __import__('api.editor', fromlist=['editor']), 'Editor')
         else:
             return editor
     
     def _get_gif(self):
-        """Lazy load gif module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('gif', lambda: __import__('api.gif', fromlist=['gif']), 'GIF Maker')
         else:
             return gif
     
     def _get_shortener(self):
-        """Lazy load shortener module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('shortener', lambda: __import__('api.shortener', fromlist=['shortener']), 'URL Shortener & QR Generator')
         else:
             return shortener
     
     def _get_bg_remover(self):
-        """Lazy load bg_remover module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('bg_remover', lambda: __import__('api.bg_remover', fromlist=['bg_remover']), 'Background Remover (Rembg)')
         else:
             return bg_remover
     
     def _get_wave_auth(self):
-        """Lazy load wave_auth module"""
         if USE_LAZY_IMPORTS:
             return lazy_import('wave_auth', lambda: __import__('api.wave_auth', fromlist=['wave_auth']), 'Wave Auth (Librosa)')
         else:
@@ -146,12 +135,8 @@ class Api:
 
 def main():
     if not USE_LAZY_IMPORTS:
-        # Only call cleanup if bg_remover is already imported
         from api.bg_remover import cleanup_temp
         cleanup_temp()
-    else:
-        # Cleanup will be done lazily when bg_remover is first loaded
-        pass
     
     t = threading.Thread(target=run_server, daemon=True)
     t.start()

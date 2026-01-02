@@ -1,10 +1,3 @@
-"""
-Import Time Analyzer for Python Applications
-
-Parses output from 'python -X importtime' and displays slowest imports.
-Helps identify bottlenecks in module loading.
-"""
-
 import re
 import sys
 from collections import defaultdict
@@ -12,7 +5,6 @@ from typing import Dict, List, Tuple
 
 
 def analyze(filename: str) -> None:
-    """Parse and display import time analysis"""
     try:
         with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
