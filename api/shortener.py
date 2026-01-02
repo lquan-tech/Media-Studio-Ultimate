@@ -111,7 +111,7 @@ def generate_advanced_qr(json_args):
             img.paste(logo, pos, mask=logo)
         
         
-        temp_dir = os.path.join(os.getcwd(), 'screenshots')
+        temp_dir = os.path.join(os.getcwd(), 'temp')
         if not os.path.exists(temp_dir): os.makedirs(temp_dir)
         
         fname = f"qr_{int(time.time()*1000)}.png"
