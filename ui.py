@@ -204,6 +204,21 @@ HTML_CONTENT = """<!DOCTYPE html>
                                 </select>
                             </div>
                         </div>
+
+                        <div id="dl-opt-cover" class="row" style="margin-top:15px; background:#1a1f2e; padding:15px; border-radius:10px; border:1px solid #333;">
+                             <label class="label-title" style="width:100%">Cover Art (Optional)</label>
+                             <div class="col" style="flex:0 0 auto;">
+                                 <div id="cover-placeholder" style="width:100px; height:100px; border:2px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; font-size:2em; cursor:pointer; background:#222;" onclick="selectCoverArt()">+</div>
+                                 <img id="cover-preview" style="width:100px; height:100px; object-fit:cover; border-radius:8px; display:none; border:1px solid #444;">
+                             </div>
+                             <div class="col">
+                                 <div style="margin-bottom:5px; font-size:0.9em; color:#ddd;">Embed custom album art into your downloaded file.</div>
+                                 <button class="btn btn-sm btn-secondary" onclick="selectCoverArt()">Select Image</button>
+                                 <button class="btn btn-sm btn-secondary" onclick="clearCoverArt()" style="background:#442222; margin-left:5px;">Remove</button>
+                                 <div style="font-size:0.8em; color:#888; margin-top:8px;">Supports JPG/PNG. Auto-resized to fit.</div>
+                                 <input type="hidden" id="dl-cover-path">
+                             </div>
+                        </div>
                         
 
                         <div id="dl-playlist-info" style="display:none; margin-top:15px; padding:15px; background:#222; border-radius:10px; border-left:4px solid var(--primary);">
@@ -830,6 +845,24 @@ HTML_CONTENT = """<!DOCTYPE html>
         bitrateContainer.style.display = (audioFmt === 'wav') ? 'none' : 'block';
     }
 
+    async function selectCoverArt() {
+        const f = await window.pywebview.api.choose_files(false);
+        if(f && f.length) {
+            const path = f[0];
+            document.getElementById('dl-cover-path').value = path;
+            document.getElementById('cover-preview').src = "http://127.0.0.1:8000/stream?path=" + encodeURIComponent(path);
+            document.getElementById('cover-preview').style.display = 'block';
+            document.getElementById('cover-placeholder').style.display = 'none';
+        }
+    }
+    
+    function clearCoverArt() {
+        document.getElementById('dl-cover-path').value = "";
+        document.getElementById('cover-preview').src = "";
+        document.getElementById('cover-preview').style.display = 'none';
+        document.getElementById('cover-placeholder').style.display = 'flex';
+    }
+
     async function dl_start() {
         if(!dlData) return;
         
@@ -840,6 +873,7 @@ HTML_CONTENT = """<!DOCTYPE html>
             fps: document.getElementById('dl-fps').value,
             bitrate: document.getElementById('dl-bitrate').value,
             audio_fmt: document.getElementById('dl-audio-fmt') ? document.getElementById('dl-audio-fmt').value : 'mp3',
+            cover_art: document.getElementById('dl-cover-path') ? document.getElementById('dl-cover-path').value : null,
             is_playlist: dlData._type === 'playlist'
         };
 
